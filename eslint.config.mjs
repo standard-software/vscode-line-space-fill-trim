@@ -25,7 +25,7 @@ export default [
       ],
       'no-undef': [`off`],
       'no-unused-vars': `off`,
-      'no-multi-spaces': [`off`],
+      'no-multi-spaces': [`warn`],
       'no-constant-condition': [`off`],
 
       'object-curly-spacing': [`error`, `always`],

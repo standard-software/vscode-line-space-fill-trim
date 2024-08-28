@@ -38,8 +38,28 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-line-space-fill-trim.helloWorld",
-        "title": "Line Space : Fill : Trim "
+        "command": "vscode-line-space-fill-trim.FillAllLines",
+        "title": "Line Space : Fill To End : Select All Lines"
+      },
+      {
+        "command": "vscode-line-space-fill-trim.FillTextLines",
+        "title": "Line Space : Fill To End : Select Text Lines"
+      },
+      {
+        "command": "vscode-line-space-fill-trim.TrimStart",
+        "title": "Line Space : Trim Start"
+      },
+      {
+        "command": "vscode-line-space-fill-trim.TrimEnd",
+        "title": "Line Space : Trim End"
+      },
+      {
+        "command": "vscode-line-space-fill-trim.Trim",
+        "title": "Line Space : Trim"
+      },
+      {
+        "command": "vscode-line-space-fill-trim.CutMinIndent",
+        "title": "Line Space : Cut Min Indent"
       }
     ]
   },
