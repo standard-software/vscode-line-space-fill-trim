@@ -12,29 +12,67 @@ const {
 
 function activate(context) {
 
+  const main = (commandName) => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showInformationMessage(`No editor is active`);
+      return;
+    }
+    editor.edit(editBuilder => {
+      switch (commandName) {
+      case cmdFillAllLines: {
+        vscode.window.showInformationMessage(`FillAllLines`);
+      } break;
+      case cmdFillTextLines: {
+        vscode.window.showInformationMessage(`FillTextLines`);
+      } break;
+      case cmdTrimStart: {
+        vscode.window.showInformationMessage(`TrimStart`);
+      } break;
+      case cmdTrimEnd: {
+        vscode.window.showInformationMessage(`TrimEnd`);
+      } break;
+      case cmdTrim: {
+        vscode.window.showInformationMessage(`Trim`);
+      } break;
+      case cmdCutMinIndent: {
+        vscode.window.showInformationMessage(`CutMinIndent`);
+      } break;
+      default: {
+        throw new Error(`LineSpaceFillTrim main`);
+      }
+      }
+    });
+  };
 
-  registerCommand(context, `vscode-line-space-fill-trim.FillAllLines`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.FillAllLines`);
+  const cmdFillAllLines = `FillAllLines`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdFillAllLines}`, () => {
+    main(cmdFillAllLines);
   });
 
-  registerCommand(context, `vscode-line-space-fill-trim.FillTextLines`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.FillTextLines`);
+  const cmdFillTextLines = `FillTextLines`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdFillTextLines}`, () => {
+    main(cmdFillTextLines);
   });
 
-  registerCommand(context, `vscode-line-space-fill-trim.TrimStart`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.TrimStart`);
+  const cmdTrimStart = `TrimStart`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdTrimStart}`, () => {
+    main(cmdTrimStart);
   });
 
-  registerCommand(context, `vscode-line-space-fill-trim.TrimEnd`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.TrimEnd`);
+  const cmdTrimEnd = `TrimEnd`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdTrimEnd}`, () => {
+    main(cmdTrimEnd);
   });
 
-  registerCommand(context, `vscode-line-space-fill-trim.Trim`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.Trim`);
+  const cmdTrim = `Trim`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdTrim}`, () => {
+    main(cmdTrim);
   });
 
-  registerCommand(context, `vscode-line-space-fill-trim.CutMinIndent`, () => {
-    vscode.window.showInformationMessage(`vscode-line-space-fill-trim.CutMinIndent`);
+  const cmdCutMinIndent = `CutMinIndent`;
+  registerCommand(context, `vscode-line-space-fill-trim.${cmdCutMinIndent}`, () => {
+    main(cmdCutMinIndent);
   });
 
 }
