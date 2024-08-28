@@ -39,7 +39,7 @@
     "commands": [
       {
         "command": "vscode-line-space-fill-trim.helloWorld",
-        "title": "Hello World"
+        "title": "Line Space : Fill : Trim "
       }
     ]
   },
