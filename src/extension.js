@@ -1,4 +1,5 @@
 const vscode = require(`vscode`);
+const split = require(`graphemesplit`);
 
 const {
   registerCommand,
@@ -9,6 +10,37 @@ const {
   _trim,
   _trimFirst,
 } = require(`./parts/parts.js`);
+
+const assert = (condition, message) => {
+  if (!condition) {
+    throw new Error(message || `Assertion failed`);
+  }
+};
+
+const textLength = (str) => {
+  let result = 0;
+  for(const char of split(str)){
+    const codePoint = char.codePointAt(0);
+    const len = 0x00 <= codePoint && codePoint <= 0xFF ? 1 : 2;
+    result += len;
+  }
+  return result;
+};
+
+const getMaxLength = (editor, { continueEmptyLine }) => {
+  let maxLength = 0;
+  for (let { start, end } of editor.selections) {
+    for (let i = start.line; i <= end.line; i += 1) {
+      const line = editor.document.lineAt(i).text;
+      if (continueEmptyLine && _trim(line) === ``) { continue; }
+      const length = textLength(line);
+      if (maxLength < length) {
+        maxLength = length;
+      }
+    }
+  }
+  return maxLength;
+};
 
 function activate(context) {
 
@@ -21,11 +53,43 @@ function activate(context) {
     editor.edit(editBuilder => {
       switch (commandName) {
       case cmdFillAllLines: {
-        vscode.window.showInformationMessage(`FillAllLines`);
+        const runAfterSelections = [];
+        const maxLength = getMaxLength(editor, { continueEmptyLine: false });
+        console.log({ maxLength });
+        for (let { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            editBuilder.insert(
+              new vscode.Position(i, line.length),
+              ` `.repeat(maxLength - textLength(line))
+            );
+            runAfterSelections.push(
+              new vscode.Selection(i, maxLength, i, maxLength)
+            );
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
+
       case cmdFillTextLines: {
-        vscode.window.showInformationMessage(`FillTextLines`);
+        const runAfterSelections = [];
+        const maxLength = getMaxLength(editor, { continueEmptyLine: true });
+        for (let { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            if (_trim(line) === ``) { continue; }
+            editBuilder.insert(
+              new vscode.Position(i, line.length),
+              ` `.repeat(maxLength - textLength(line))
+            );
+            runAfterSelections.push(
+              new vscode.Selection(i, maxLength, i, maxLength)
+            );
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
+
       case cmdTrimStart: {
         vscode.window.showInformationMessage(`TrimStart`);
       } break;
