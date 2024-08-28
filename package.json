@@ -3,32 +3,49 @@
   "displayName": "vscode-line-space-fill-trim",
   "description": "This vscode extension allows you to Fill and Trim spaces in lines.",
   "version": "0.0.1",
+  "scripts": {
+    "lint": "npx eslint",
+    "lintfix": "npx eslint --fix",
+    "pack": "npx vsce package && code --install-extension vscode-line-space-fill-trim-0.0.1.vsix",
+    "": ""
+  },
+  "icon": "vscode-line-space-fill-trim_icon.png",
+  "publisher": "SatoshiYamamoto",
+  "author": {
+    "name": "Satoshi Yamamoto",
+    "email": "standard.software.net@gmail.com",
+    "url": "https://www.facebook.com/stndardsoftware"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standard-software/vscode-line-space-fill-trim"
+  },
   "engines": {
     "vscode": "^1.92.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "line",
+    "space",
+    "fill",
+    "trim"
+  ],
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./src/extension.js",
   "contributes": {
-    "commands": [{
-      "command": "vscode-line-space-fill-trim.helloWorld",
-      "title": "Hello World"
-    }]
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "pretest": "npm run lint",
-    "test": "vscode-test"
+    "commands": [
+      {
+        "command": "vscode-line-space-fill-trim.helloWorld",
+        "title": "Hello World"
+      }
+    ]
   },
   "devDependencies": {
-    "@types/vscode": "^1.92.0",
-    "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@eslint/js": "^9.9.1",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0"
   }
 }
