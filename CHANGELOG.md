@@ -1,9 +1,10 @@
 # Change Log
 
-All notable changes to the "vscode-line-space-fill-trim" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+## [Unreleased] - 2024/08/29 Thu
+- add command
+  - Line Space : Fill To End : Select All Lines
+  - Line Space : Fill To End : Select Text Lines
+  - Line Space : Trim Start
+  - Line Space : Trim End
+  - Line Space : Trim
+  - Line Space : Cut Min Indent

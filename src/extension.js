@@ -9,6 +9,7 @@ const {
 const {
   _trim,
   _trimFirst,
+  _trimLast,
 } = require(`./parts/parts.js`);
 
 const assert = (condition, message) => {
@@ -29,7 +30,7 @@ const textLength = (str) => {
 
 const getMaxLength = (editor, { continueEmptyLine }) => {
   let maxLength = 0;
-  for (let { start, end } of editor.selections) {
+  for (const { start, end } of editor.selections) {
     for (let i = start.line; i <= end.line; i += 1) {
       const line = editor.document.lineAt(i).text;
       if (continueEmptyLine && _trim(line) === ``) { continue; }
@@ -40,6 +41,22 @@ const getMaxLength = (editor, { continueEmptyLine }) => {
     }
   }
   return maxLength;
+};
+
+const getMinIndent = (editor) => {
+  let minIndent = Infinity;
+  for (const { start, end } of editor.selections) {
+    for (let i = start.line; i <= end.line; i += 1) {
+      const line = editor.document.lineAt(i).text;
+      if (_trim(line) === ``) { continue; }
+      const indent = line.length - _trimFirst(line, [` `, `\t`]).length;
+      if (indent < minIndent) {
+        minIndent = indent;
+      }
+    }
+  }
+  if (minIndent === Infinity) { minIndent = 0; }
+  return minIndent;
 };
 
 function activate(context) {
@@ -55,8 +72,7 @@ function activate(context) {
       case cmdFillAllLines: {
         const runAfterSelections = [];
         const maxLength = getMaxLength(editor, { continueEmptyLine: false });
-        console.log({ maxLength });
-        for (let { start, end } of editor.selections) {
+        for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
             const line = editor.document.lineAt(i).text;
             editBuilder.insert(
@@ -74,7 +90,7 @@ function activate(context) {
       case cmdFillTextLines: {
         const runAfterSelections = [];
         const maxLength = getMaxLength(editor, { continueEmptyLine: true });
-        for (let { start, end } of editor.selections) {
+        for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
             const line = editor.document.lineAt(i).text;
             if (_trim(line) === ``) { continue; }
@@ -91,16 +107,102 @@ function activate(context) {
       } break;
 
       case cmdTrimStart: {
-        vscode.window.showInformationMessage(`TrimStart`);
+        const runAfterSelections = [];
+        for (const { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            const trimLine = _trimFirst(line, [` `, `\t`]);
+            if (line.length !== trimLine.length) {
+              editBuilder.delete(new vscode.Range(
+                i, 0, i, line.length - trimLine.length,
+              ));
+            }
+            if (trimLine.length !== 0) {
+              runAfterSelections.push(
+                new vscode.Selection(i, 0, i, 0)
+              );
+            }
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
+
       case cmdTrimEnd: {
-        vscode.window.showInformationMessage(`TrimEnd`);
+        const runAfterSelections = [];
+        for (const { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            const trimLine = _trimLast(line, [` `, `\t`]);
+            if (line.length !== trimLine.length) {
+              editBuilder.delete(
+                new vscode.Range(
+                  i, trimLine.length,
+                  i, line.length
+                )
+              );
+            }
+            if (trimLine.length !== 0) {
+              runAfterSelections.push(
+                new vscode.Selection(i, trimLine.length, i, trimLine.length)
+              );
+            }
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
+
       case cmdTrim: {
         vscode.window.showInformationMessage(`Trim`);
+
+        const runAfterSelections = [];
+        for (const { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            const trimLastLine = _trimLast(line, [` `, `\t`]);
+            if (line.length !== trimLastLine.length) {
+              editBuilder.delete(
+                new vscode.Range(
+                  i, trimLastLine.length,
+                  i, line.length
+                )
+              );
+            }
+            const trimFirstLine = _trimFirst(trimLastLine, [` `, `\t`]);
+            if (trimLastLine.length !== trimFirstLine.length) {
+              editBuilder.delete(new vscode.Range(
+                i, 0, i, trimLastLine.length - trimFirstLine.length,
+              ));
+            }
+            if (trimFirstLine.length !== 0) {
+              runAfterSelections.push(
+                new vscode.Selection(i, 0, i, 0)
+              );
+            }
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
       case cmdCutMinIndent: {
-        vscode.window.showInformationMessage(`CutMinIndent`);
+        const minIndent = getMinIndent(editor);
+        const runAfterSelections = [];
+        for (const { start, end } of editor.selections) {
+          for (let i = start.line; i <= end.line; i += 1) {
+            const line = editor.document.lineAt(i).text;
+            const trimLine = _trim(line);
+            if ((trimLine.length === 0) && (line.length < minIndent)) {
+              continue;
+            }
+            editBuilder.delete(new vscode.Range(
+              i, 0, i, minIndent,
+            ));
+            if (trimLine.length !== 0) {
+              runAfterSelections.push(
+                new vscode.Selection(i, minIndent, i, minIndent)
+              );
+            }
+          }
+        }
+        editor.selections = runAfterSelections;
       } break;
       default: {
         throw new Error(`LineSpaceFillTrim main`);
