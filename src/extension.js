@@ -67,11 +67,12 @@ function activate(context) {
       vscode.window.showInformationMessage(`No editor is active`);
       return;
     }
-    editor.edit(editBuilder => {
-      switch (commandName) {
-      case cmdFillAllLines: {
-        const runAfterSelections = [];
+
+    switch (commandName) {
+    case cmdFillAllLines: {
+      editor.edit(editBuilder => {
         const maxLength = getMaxLength(editor, { continueEmptyLine: false });
+        const runAfterSelections = [];
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
             const line = editor.document.lineAt(i).text;
@@ -80,14 +81,16 @@ function activate(context) {
               ` `.repeat(maxLength - textLength(line))
             );
             runAfterSelections.push(
-              new vscode.Selection(i, maxLength, i, maxLength)
+              new vscode.Selection(i, line.length, i, line.length)
             );
           }
         }
         editor.selections = runAfterSelections;
-      } break;
+      });
+    } break;
 
-      case cmdFillTextLines: {
+    case cmdFillTextLines: {
+      editor.edit(editBuilder => {
         const runAfterSelections = [];
         const maxLength = getMaxLength(editor, { continueEmptyLine: true });
         for (const { start, end } of editor.selections) {
@@ -104,9 +107,11 @@ function activate(context) {
           }
         }
         editor.selections = runAfterSelections;
-      } break;
+      });
+    } break;
 
-      case cmdTrimStart: {
+    case cmdTrimStart: {
+      editor.edit(editBuilder => {
         const runAfterSelections = [];
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
@@ -125,9 +130,11 @@ function activate(context) {
           }
         }
         editor.selections = runAfterSelections;
-      } break;
+      });
+    } break;
 
-      case cmdTrimEnd: {
+    case cmdTrimEnd: {
+      editor.edit(editBuilder => {
         const runAfterSelections = [];
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
@@ -149,11 +156,11 @@ function activate(context) {
           }
         }
         editor.selections = runAfterSelections;
-      } break;
+      });
+    } break;
 
-      case cmdTrim: {
-        vscode.window.showInformationMessage(`Trim`);
-
+    case cmdTrim: {
+      editor.edit(editBuilder => {
         const runAfterSelections = [];
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
@@ -181,8 +188,10 @@ function activate(context) {
           }
         }
         editor.selections = runAfterSelections;
-      } break;
-      case cmdCutMinIndent: {
+      });
+    } break;
+    case cmdCutMinIndent: {
+      editor.edit(editBuilder => {
         const minIndent = getMinIndent(editor);
         const runAfterSelections = [];
         for (const { start, end } of editor.selections) {
@@ -203,12 +212,12 @@ function activate(context) {
           }
         }
         editor.selections = runAfterSelections;
-      } break;
-      default: {
-        throw new Error(`LineSpaceFillTrim main`);
-      }
-      }
-    });
+      });
+    } break;
+    default: {
+      throw new Error(`LineSpaceFillTrim main`);
+    }
+    }
   };
 
   const cmdFillAllLines = `FillAllLines`;
