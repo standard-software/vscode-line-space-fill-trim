@@ -76,12 +76,14 @@ function activate(context) {
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
             const line = editor.document.lineAt(i).text;
+            const insertSpaceCount = maxLength - textLength(line);
             editBuilder.insert(
               new vscode.Position(i, line.length),
-              ` `.repeat(maxLength - textLength(line))
+              ` `.repeat(insertSpaceCount)
             );
+            const selectColumn = line.length + insertSpaceCount;
             runAfterSelections.push(
-              new vscode.Selection(i, line.length, i, line.length)
+              new vscode.Selection(i, selectColumn, i, selectColumn)
             );
           }
         }
@@ -96,13 +98,15 @@ function activate(context) {
         for (const { start, end } of editor.selections) {
           for (let i = start.line; i <= end.line; i += 1) {
             const line = editor.document.lineAt(i).text;
+            const insertSpaceCount = maxLength - textLength(line);
             if (_trim(line) === ``) { continue; }
             editBuilder.insert(
               new vscode.Position(i, line.length),
-              ` `.repeat(maxLength - textLength(line))
+              ` `.repeat(insertSpaceCount)
             );
+            const selectColumn = line.length + insertSpaceCount;
             runAfterSelections.push(
-              new vscode.Selection(i, maxLength, i, maxLength)
+              new vscode.Selection(i, selectColumn, i, selectColumn)
             );
           }
         }
