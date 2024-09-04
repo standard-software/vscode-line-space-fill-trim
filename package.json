@@ -1,12 +1,12 @@
 {
   "name": "vscode-line-space-fill-trim",
-  "displayName": "vscode-line-space-fill-trim",
+  "displayName": "Line Space Fill Trim",
   "description": "This vscode extension allows you to Fill and Trim spaces in lines.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "lint": "npx eslint",
     "lintfix": "npx eslint --fix",
-    "pack": "npx vsce package && code --install-extension vscode-line-space-fill-trim-0.0.1.vsix",
+    "pack": "npx vsce package && code --install-extension vscode-line-space-fill-trim-1.0.0.vsix",
     "": ""
   },
   "icon": "vscode-line-space-fill-trim_icon.png",
